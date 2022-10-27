@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 from selenium import webdriver
 import time
+import re
 
 
 driver = webdriver.Chrome("D:\Projetcs\Frontiers\chromedriver_win32\chromedriver.exe")
@@ -19,18 +20,37 @@ def get_journals(soup):
     return journals
 
 
+def split_metric(metric, keys, values):
+    is_float = re.compile("^[0-9]*.[0-9]*$")
+    if metric.text:
+        for data in metric.text.split():
+            item = data.replace(",", "")
+            if item != "views":
+                if item.isdigit() or is_float.match(item):
+                    values.append(float(item))
+                else:
+                    keys.append("article views" if item == "article" else item)
+
+
+def metric_to_dict(metrics):
+    keys = []
+    values = []
+    for metric in metrics:
+        split_metric(metric, keys, values)
+    return dict(zip(keys, values))
+
+
 def get_journal_data(journals):
+    journal_data = {}
     for journal in journals:
         title = journal.find('h2', class_='JournalCard__title')
-        data = journal.find_all('span', class_='JournalCard__data')
-        print("Title =", title.text)
-        for item in data:
-            print("data =", item.text)
-        print("---------------------------------")
+        metrics = journal.find_all('span', class_='JournalCard__data')
+        journal_data[title.text] = metric_to_dict(metrics)
+    return journal_data
 
 
 x = get_journals(soup)
-get_journal_data(x)
+print(get_journal_data(x))
 
 
 
