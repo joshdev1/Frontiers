@@ -1,10 +1,13 @@
 from bs4 import BeautifulSoup
+import pandas as pd
+from matplotlib.pyplot import matplotlib
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 import time
 import re
 
-
-driver = webdriver.Chrome("D:\Projetcs\Frontiers\chromedriver_win32\chromedriver.exe")
+driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 driver.get("https://www.frontiersin.org/journals")
 driver.execute_script("window.scrollBy(0,document.body.scrollHeight)")
 time.sleep(5)
@@ -45,19 +48,18 @@ def get_journal_data(journals):
     for journal in journals:
         title = journal.find('h2', class_='JournalCard__title')
         metrics = journal.find_all('span', class_='JournalCard__data')
-        journal_data[title.text] = metric_to_dict(metrics)
+        journal_data[title.text.strip()] = metric_to_dict(metrics)
+    print(journal_data)
     return journal_data
 
 
-x = get_journals(soup)
-print(get_journal_data(x))
+df = pd.DataFrame.from_dict(get_journal_data(get_journals(soup)), orient="index")
+df2 = pd.DataFrame.from_dict(get_journal_data(get_journals(soup)))
 
+df.to_excel("journal_data.xlsx")
 
-
-
-
-
-
+print(df.tail())
+print(df2.tail())
 
 
 
