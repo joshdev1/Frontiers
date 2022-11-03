@@ -49,17 +49,14 @@ def get_journal_data(journals):
         title = journal.find('h2', class_='JournalCard__title')
         metrics = journal.find_all('span', class_='JournalCard__data')
         journal_data[title.text.strip()] = metric_to_dict(metrics)
-    print(journal_data)
     return journal_data
 
 
-df = pd.DataFrame.from_dict(get_journal_data(get_journals(soup)), orient="index")
-df2 = pd.DataFrame.from_dict(get_journal_data(get_journals(soup)))
+df = pd.DataFrame(get_journal_data(get_journals(soup)))
+df_transpose = df.transpose()
 
-df.to_excel("journal_data.xlsx")
+df_transpose.to_excel("journal_data.xlsx")
 
-print(df.tail())
-print(df2.tail())
 
 
 
