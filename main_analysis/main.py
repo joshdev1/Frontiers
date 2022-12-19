@@ -31,16 +31,16 @@ soup = BeautifulSoup(driver.page_source, 'html.parser')
 print(soup)
 
 
-# def get_article_cards(soup):
-#     scraped_article_cards = soup.find_all('article', class_='CardArticle')
-#     article_cards = []
-#     for article_card in scraped_article_cards:
-#         article_cards.append(article_card)
-#     return article_cards
-#
-#
-# x = get_article_cards(soup)
-# print(x.text)
+def get_article_cards(soup):
+    scraped_article_cards = soup.find_all('article', class_='CardArticle')
+    article_cards = []
+    for article_card in scraped_article_cards:
+        article_cards.append(article_card)
+    return article_cards
+
+
+x = get_article_cards(soup)
+print(x)
 
 
 
